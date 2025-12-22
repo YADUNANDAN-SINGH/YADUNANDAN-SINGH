@@ -28,8 +28,7 @@ class Yadunandan:
         self.name = "Yadunandan Singh"
         self.age = 18
         self.location = "India 🇮🇳"
-        self.role = "AI Engineer"
-        self.education = "Mathematics for Machine Learning Enthusiast"
+        self.role = "AI Engineer" 
         
     def current_focus(self):
         return [
