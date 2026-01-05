@@ -55,6 +55,7 @@ class Yadunandan:
 
 ### Languages & Core
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
@@ -69,6 +70,7 @@ class Yadunandan:
 ### Web & Backend
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
+![Actix Web](https://img.shields.io/badge/Actix_Web-000000?style=for-the-badge&logo=rust&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 
@@ -156,6 +158,42 @@ Full-stack application with a **custom-trained CNN** (CIFAR-10) for real-time im
 - Custom Convolutional Neural Network architecture
 - Real-time prediction with confidence percentages
 - Clean drag-and-drop web interface
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🦀 [Rust Actix Quiz Game](https://github.com/YADUNANDAN-SINGH/-Rust-Actix-Quiz-Game)
+<p>
+<img src="https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white"/>
+<img src="https://img.shields.io/badge/Actix_Web-000000?style=flat-square"/>
+<img src="https://img.shields.io/badge/OpenTDB_API-667eea?style=flat-square"/>
+</p>
+
+Production-ready **Rust web application** with Actix Web framework. Interactive quiz game featuring async API integration with OpenTDB, server-side score validation, and anti-cheat architecture.
+
+**🔑 Key Features:**
+- Async HTTP requests with reqwest for real-time data
+- Server-side scoring logic preventing client tampering
+- Type-safe JSON with serde serialization
+
+</td>
+<td width="50%">
+
+### 🔐 [Django SVD Face Authentication](https://github.com/YADUNANDAN-SINGH/django-svd-face-auth)
+<p>
+<img src="https://img.shields.io/badge/Django-092E20?style=flat-square&logo=django&logoColor=white"/>
+<img src="https://img.shields.io/badge/SVD-667eea?style=flat-square"/>
+<img src="https://img.shields.io/badge/Docker-2CA5E0?style=flat-square&logo=docker&logoColor=white"/>
+</p>
+
+Password-less authentication system using **Eigenfaces algorithm** powered by SVD. Camera-based signup with personal notes management and data augmentation for robust face recognition.
+
+**🔑 Key Features:**
+- Eigenfaces/SVD for face recognition mathematics
+- 8 auto-generated face variations per user
+- Real-time camera-based authentication
 
 </td>
 </tr>
