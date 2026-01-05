@@ -43,8 +43,8 @@ class Yadunandan:
 ```
 
 <div align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=YADUNANDAN-SINGH&theme=tokyonight&bg_color=0D1117&hide_border=true" height="180" alt="GitHub Stats"/>
-  <img src="https://streak-stats.demolab.com/?user=YADUNANDAN-SINGH&theme=tokyonight&hide_border=true&background=0D1117&ring=667eea&fire=764ba2&currStreakLabel=ffffff" height="180" alt="Streak Stats"/>
+  <img src="https://github-readme-stats.vercel.app/api?username=YADUNANDAN-SINGH&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=667eea&icon_color=764ba2&text_color=ffffff&count_private=true" height="180" alt="GitHub Stats"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=YADUNANDAN-SINGH&theme=tokyonight&hide_border=true&background=0D1117&ring=667eea&fire=764ba2&currStreakLabel=ffffff" height="180" alt="Streak Stats"/>
 </div>
 
 ---
@@ -239,9 +239,7 @@ ML model for predicting residential property prices in **Delhi NCR** using autom
   <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=YADUNANDAN-SINGH&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=667eea&text_color=ffffff" height="180" alt="Top Languages"/>
 </div>
 
-<div align="center">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=YADUNANDAN-SINGH&theme=tokyonight" width="100%" alt="Contribution Graph"/>
-</div>
+
 
 ---
 
