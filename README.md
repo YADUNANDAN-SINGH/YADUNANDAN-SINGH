@@ -42,10 +42,7 @@ class Yadunandan:
         return "I don't just solve problems—I build tools. Learning becomes real when you create."
 ```
 
-<div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=YADUNANDAN-SINGH&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=667eea&icon_color=764ba2&text_color=ffffff&count_private=true" height="180" alt="GitHub Stats"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=YADUNANDAN-SINGH&theme=tokyonight&hide_border=true&background=0D1117&ring=667eea&fire=764ba2&currStreakLabel=ffffff" height="180" alt="Streak Stats"/>
-</div>
+
 
 ---
 
@@ -235,8 +232,7 @@ ML model for predicting residential property prices in **Delhi NCR** using autom
 ## 📊 GitHub Activity
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=YADUNANDAN-SINGH&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=667eea&icon_color=764ba2&text_color=ffffff&count_private=true" height="180" alt="GitHub Stats"/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=YADUNANDAN-SINGH&layout=compact&theme=tokyonight&hide_border=true&bg_color=0D1117&title_color=667eea&text_color=ffffff" height="180" alt="Top Languages"/>
+  <img src="https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake-dark.svg" width="100%" alt="Snake Animation"/>
 </div>
 
 
@@ -302,6 +298,6 @@ ML model for predicting residential property prices in **Delhi NCR** using autom
   <em>⭐ If you find my projects interesting, consider giving them a star!</em>
 </p>
 
-<img src="https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake-dark.svg" width="100%"/>
+
 
 </div>
