@@ -64,8 +64,8 @@ Anyone can push to their own repos. These went through someone else's review.
 ## Numbers
 
 <div align="center">
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=YADUNANDAN-SINGH&show_icons=true&hide_border=true&bg_color=00000000&title_color=667eea&icon_color=764ba2&text_color=8b95c9&ring_color=667eea" alt="GitHub stats"/>
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=YADUNANDAN-SINGH&layout=compact&hide_border=true&bg_color=00000000&title_color=667eea&text_color=8b95c9" alt="Top languages"/>
+<img height="165" src="https://github-readme-stats.shion.dev/api?username=YADUNANDAN-SINGH&show_icons=true&hide_border=true&bg_color=00000000&title_color=667eea&icon_color=764ba2&text_color=8b95c9&ring_color=667eea" alt="GitHub stats"/>
+<img height="165" src="https://github-readme-stats.shion.dev/api/top-langs/?username=YADUNANDAN-SINGH&layout=compact&hide_border=true&bg_color=00000000&title_color=667eea&text_color=8b95c9" alt="Top languages"/>
 </div>
 
 <br/>
