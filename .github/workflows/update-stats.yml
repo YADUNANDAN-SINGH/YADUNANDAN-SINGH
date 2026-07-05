@@ -15,8 +15,11 @@ jobs:
       - name: Fetch and Modify Stats SVG
         run: |
           curl -s "https://github-readme-stats.shion.dev/api?username=YADUNANDAN-SINGH&show_icons=true&hide_border=true&bg_color=00000000&title_color=667eea&icon_color=764ba2&text_color=8b95c9&ring_color=667eea" > stats.svg
-          # Remove the rank text group
-          sed -i '/<g class="rank-text">/,/<\/g>/d' stats.svg
+          # Replace the rank text group with a fire emoji
+          sed -i -e '/<g class="rank-text">/,/<\/g>/c\
+        <g class="rank-text">\
+          <text x="-5" y="3" alignment-baseline="central" dominant-baseline="central" text-anchor="middle" font-size="36">🔥</text>\
+        </g>' stats.svg
           
       - name: Commit and Push Changes
         run: |
