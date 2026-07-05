@@ -1,0 +1,27 @@
+name: Update GitHub Stats
+
+on:
+  schedule:
+    - cron: "0 */12 * * *" # Run every 12 hours
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+      - name: Fetch and Modify Stats SVG
+        run: |
+          curl -s "https://github-readme-stats.shion.dev/api?username=YADUNANDAN-SINGH&show_icons=true&hide_border=true&bg_color=00000000&title_color=667eea&icon_color=764ba2&text_color=8b95c9&ring_color=667eea" > stats.svg
+          # Remove the rank text group
+          sed -i '/<g class="rank-text">/,/<\/g>/d' stats.svg
+          
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add stats.svg
+          git commit -m "Update GitHub stats SVG" || exit 0
+          git push
