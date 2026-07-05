@@ -35,7 +35,7 @@ Anyone can push to their own repos. These went through someone else's review.
 - 🟣 **c2siorg / DataLoom** — [#383](https://github.com/c2siorg/DataLoom/pull/383) preview-before-persist flow for row-reducing transforms, so users validate output before it ever hits the pipeline
 - 🟣 **c2siorg / DataLoom** — [#348](https://github.com/c2siorg/DataLoom/pull/348) fixed strict case-sensitivity in string filtering, plus NaN handling, dtype checks, and test coverage
 - 🟣 **c2siorg / TensorMap** — [#367](https://github.com/c2siorg/TensorMap/pull/367) fixed a FastAPI 500 by repairing NaN → JSON serialization in dataset preview
-- 🟢 **in review** — [#410](https://github.com/c2siorg/DataLoom/pull/410) extends the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
+- 🟣 **c2siorg / DataLoom** — [#410](https://github.com/c2siorg/DataLoom/pull/410) extends the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
 
 <details>
 <summary><b>The archive</b> — earlier builds, same habit</summary>
@@ -57,7 +57,6 @@ Anyone can push to their own repos. These went through someone else's review.
 
 ## Now
 
-- Shipping the apply-preview workflow across DataLoom's whole transform layer — [c2siorg #410](https://github.com/c2siorg/DataLoom/pull/410), in review
 - IIT Madras — BS in Data Science & Applications, qualifier July 2026
 - The long game: GSoC, Summer of Bitcoin, and a signed transaction on signet
 
