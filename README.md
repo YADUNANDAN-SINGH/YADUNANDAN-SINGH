@@ -58,7 +58,8 @@ Anyone can push to their own repos. These went through someone else's review.
 ## Now
 
 - IIT Madras — BS in Data Science & Applications, qualifier July 2026
-- The long game: GSoC, Summer of Bitcoin, and a signed transaction on signet
+- Open source: contributing to [c2siorg/DataLoom](https://github.com/c2siorg/DataLoom) and [c2siorg/TensorMap](https://github.com/c2siorg/TensorMap) — 5 PRs merged so far
+- Next up: a signed transaction on signet
 
 ## Numbers
 
