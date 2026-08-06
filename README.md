@@ -27,15 +27,33 @@ That one rule produced everything below.
 | "just ask an LLM to do the math" | **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)** — a CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic.<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> |
 | The password field | **[FaceAuth Notes](https://github.com/YADUNANDAN-SINGH/django-svd-face-auth)** — Eigenfaces written out from the linear algebra (mean face → centered matrix → SVD → projection weights) and wired in as the actual login for a Django notes app, with auto-augmented training shots per user.<br/><sub>`django` `opencv` `numpy` `docker`</sub> |
 | Wallet SDKs | **[bitcoin-wallet-rs](https://github.com/YADUNANDAN-SINGH/bitcoin-wallet-rs)** — key generation, wallet persistence, UTXO discovery and raw unsigned-transaction construction on signet, built directly on `secp256k1` and `rust-bitcoin` primitives. Signing is next.<br/><sub>`rust` `secp256k1` `signet`</sub> |
+| A PDF résumé | **[This portfolio + Lara](https://yadunandan-singh.pages.dev/)** — the site ships its own agent. Ask Lara about a project and she answers from a grounded knowledge base; ask for a résumé and she generates one targeted at the role you name. Merged-PR counts on the page are pulled live from the GitHub API, so the site can't quietly go stale.<br/><sub>`react` `django` `python`</sub> |
 
 ## Merged upstream
 
 Anyone can push to their own repos. These went through someone else's review.
 
-- 🟣 **c2siorg / DataLoom** — [#383](https://github.com/c2siorg/DataLoom/pull/383) preview-before-persist flow for row-reducing transforms, so users validate output before it ever hits the pipeline
-- 🟣 **c2siorg / DataLoom** — [#348](https://github.com/c2siorg/DataLoom/pull/348) fixed strict case-sensitivity in string filtering, plus NaN handling, dtype checks, and test coverage
-- 🟣 **c2siorg / TensorMap** — [#367](https://github.com/c2siorg/TensorMap/pull/367) fixed a FastAPI 500 by repairing NaN → JSON serialization in dataset preview
-- 🟣 **c2siorg / DataLoom** — [#410](https://github.com/c2siorg/DataLoom/pull/410) extends the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
+**12 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 11 in DataLoom, 1 in TensorMap.
+
+- 🟣 **DataLoom** — [#455](https://github.com/c2siorg/dataloom/pull/455) moved linting off `pull_request_target` and onto `pull_request` + `workflow_run`, so fork PRs get linted without handing them a privileged token
+- 🟣 **DataLoom** — [#410](https://github.com/c2siorg/dataloom/pull/410) extended the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
+- 🟣 **DataLoom** — [#383](https://github.com/c2siorg/dataloom/pull/383) preview-before-persist flow for row-reducing transforms, so users validate output before it ever hits the pipeline
+- 🟣 **DataLoom** — [#348](https://github.com/c2siorg/dataloom/pull/348) fixed strict case-sensitivity in string filtering, plus NaN handling, dtype checks, and test coverage
+- 🟣 **TensorMap** — [#367](https://github.com/c2siorg/tensormap/pull/367) fixed a FastAPI 500 by repairing NaN → JSON serialization in dataset preview
+
+<details>
+<summary><b>The other seven</b> — features and fixes, same repos</summary>
+<br/>
+
+- **DataLoom [#472](https://github.com/c2siorg/dataloom/pull/472)** — edit button and modal on dataset cards, so renaming a dataset no longer means leaving the home screen
+- **DataLoom [#470](https://github.com/c2siorg/dataloom/pull/470)** — export rendered charts and the correlation matrix as PNG
+- **DataLoom [#467](https://github.com/c2siorg/dataloom/pull/467)** — live password-strength meter on the password-creation forms
+- **DataLoom [#460](https://github.com/c2siorg/dataloom/pull/460)** — quick theme toggle in the top navbar
+- **DataLoom [#458](https://github.com/c2siorg/dataloom/pull/458)** — instant hover tooltips on the MenuNavbar buttons and tabs
+- **DataLoom [#453](https://github.com/c2siorg/dataloom/pull/453)** — real dark-mode styling for the Quality tab and assessment panel
+- **DataLoom [#408](https://github.com/c2siorg/dataloom/pull/408)** — hover tooltips on the toolbar icons (the first one — a small fix, deliberately)
+
+</details>
 
 <details>
 <summary><b>The archive</b> — earlier builds, same habit</summary>
@@ -50,6 +68,11 @@ Anyone can push to their own repos. These went through someone else's review.
 
 ## Writing
 
+Every article is downstream of something I actually shipped.
+
+- **[How to Find Your First Open Source Project in One Evening](https://medium.com/@yadunandan-ai-dev/how-to-find-your-first-open-source-project-in-one-evening-ab936a19d9dd)** — the method behind the merged PRs above: choose on maintainer responsiveness and community tone, not stars
+- **[ChatGPT Failed My Sister's Live Class, So I Built a Neuro-Symbolic Math Solver](https://medium.com/@yadunandan-ai-dev/chatgpt-failed-my-sisters-live-class-so-i-built-a-neuro-symbolic-ai-math-solver-from-scratch-38a809494b67)** — why perception and arithmetic should be two different components
+- **[Stop Vibe Coding](https://medium.com/@yadunandan-ai-dev/stop-vibe-coding-how-elite-developers-actually-use-ai-backed-by-real-research-da32f95c0039)** — spec-driven AI development, and what separates it from trusting the output because it *felt* right
 - **[Should You Be Scared of Agentic AI?](https://medium.com/@yadunandan-ai-dev/should-you-be-scared-of-agentic-ai-heres-the-reality-189088104d78)** — where agents actually stand, minus the panic
 - **[Don't Be a Dumb Computer: SVD Explained](https://medium.com/@yadunandan-ai-dev/dont-be-a-dumb-computer-svd-explained-subtitle-i-built-a-youtube-recommender-to-finally-155eabfbcbe6)** — the recommender that finally made SVD click. Built first, written after.
 - **[I Stopped Solving Problems and Built a Tool Instead](https://medium.com/@yadunandan-ai-dev/i-stopped-solving-problems-and-built-a-tool-instead-how-a-visualizer-taught-me-real-linear-algebra-17ea52847001)** — how shipping a visualizer taught more linear algebra than the problem sets
@@ -58,7 +81,9 @@ Anyone can push to their own repos. These went through someone else's review.
 ## Now
 
 - IIT Madras — BS in Data Science & Applications, qualifier July 2026
-- The long game: GSoC, Summer of Bitcoin, and a signed transaction on signet
+- Finishing the signing path in `bitcoin-wallet-rs` — a signed signet transaction is the next milestone
+- Still contributing to DataLoom; 12 merged and counting
+- The long game: GSoC and Summer of Bitcoin
 
 ## Numbers
 
