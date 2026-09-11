@@ -118,9 +118,8 @@ Every article is downstream of something I actually shipped.
 ## Now
 
 - **IIT Madras** — BS in Data Science & Applications, qualifier July 2026
-- **Shipping** the signing path in `bitcoin-wallet-rs` — a signed signet transaction is the next milestone
-- **Contributing** to DataLoom; 12 merged and counting
-- **The long game** — GSoC and Summer of Bitcoin
+- **Open source** — contributing to [c2siorg/DataLoom](https://github.com/c2siorg/DataLoom) and [c2siorg/TensorMap](https://github.com/c2siorg/TensorMap); 12 PRs merged so far
+- **Next up** — the signing path in `bitcoin-wallet-rs`; a signed transaction on signet is the milestone
 
 <br/>
 
