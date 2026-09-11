@@ -7,8 +7,7 @@
 
 ### AI Engineer — retrieval, agents, and the math underneath
 
-I build the layers most people import: vector stores, SVD, inference plumbing, wallet primitives.
-Self-taught · Jammu, India
+I build the layers most people import: vector stores, SVD, inference plumbing, wallet primitives. · Jammu, India
 
 [**Portfolio**](https://yadunandan-singh.pages.dev/) · [**Writing**](https://medium.com/@yadunandan-ai-dev) · [**LinkedIn**](https://www.linkedin.com/in/yadunandan-singh-ai-dev/) · [**Email**](mailto:yadunandansingh105@gmail.com)
 
