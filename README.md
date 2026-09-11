@@ -8,7 +8,7 @@
 ### AI Engineer — retrieval, agents, and the math underneath
 
 I build the layers most people import: vector stores, SVD, inference plumbing, wallet primitives.
-Self-taught · Jammu, India · IIT Madras BS in Data Science
+Self-taught · Jammu, India
 
 [**Portfolio**](https://yadunandan-singh.pages.dev/) · [**Writing**](https://medium.com/@yadunandan-ai-dev) · [**LinkedIn**](https://www.linkedin.com/in/yadunandan-singh-ai-dev/) · [**Email**](mailto:yadunandansingh105@gmail.com)
 
@@ -26,14 +26,6 @@ Self-taught · Jammu, India · IIT Madras BS in Data Science
 ![Docker](https://img.shields.io/badge/Docker-1a1b27?style=flat-square&logo=docker&logoColor=667eea)
 
 </div>
-
-<br/>
-
-## The rule
-
-**No black boxes.** If I haven't built it once from first principles, I don't get to `import` it.
-
-That one rule produced everything below.
 
 <br/>
 
@@ -66,25 +58,27 @@ The ML primitives, written out from the linear algebra rather than called.
 
 Anyone can push to their own repos. These went through someone else's review.
 
-**12 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 11 in DataLoom, 1 in TensorMap.
+**14 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 13 in DataLoom, 1 in TensorMap.
 
-- **DataLoom [#455](https://github.com/c2siorg/dataloom/pull/455)** — moved linting off `pull_request_target` and onto `pull_request` + `workflow_run`, so fork PRs get linted without handing them a privileged token
-- **DataLoom [#410](https://github.com/c2siorg/dataloom/pull/410)** — extended the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
-- **DataLoom [#383](https://github.com/c2siorg/dataloom/pull/383)** — preview-before-persist flow for row-reducing transforms, so users validate output before it ever hits the pipeline
-- **DataLoom [#348](https://github.com/c2siorg/dataloom/pull/348)** — fixed strict case-sensitivity in string filtering, plus NaN handling, dtype checks, and test coverage
-- **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** — fixed a FastAPI 500 by repairing NaN → JSON serialization in dataset preview
+- **DataLoom [#455](https://github.com/c2siorg/dataloom/pull/455)** · *CI security* — lint checks were blocked on every fork PR under `pull_request_target`. Split into a read-only `lint.yml` on `pull_request` plus a `lint-comment.yml` on `workflow_run` that holds the write permission. Closes the pwn-request hole instead of bypassing the guard.
+- **DataLoom [#507](https://github.com/c2siorg/dataloom/pull/507)** · *Performance* — paginates every endpoint that writes data: upload, save, undo, revert, transform-apply, file-append, pipeline-apply. Pagination only existed inside the preview branch, so a 121k-row project returned ~9 MB on every save. Moved into a shared `paginate_dataframe()` helper with the frontend updated to match, which also fixes the revert/pager desync.
+- **DataLoom [#410](https://github.com/c2siorg/dataloom/pull/410)** · *Refactor* — extends preview-before-apply to all 12 transformation forms (GroupBy, Pivot, Melt, Sort, Cast, FillEmpty and the rest) through a shared `usePreviewSave` hook.
+- **DataLoom [#383](https://github.com/c2siorg/dataloom/pull/383)** — a preview step before saving for row-reducing transforms (Sample, Filter, Drop Duplicates). Every Apply used to permanently overwrite the working CSV, so sampling 300→100 rows and then trying 120 failed silently. Now Apply previews, and you choose Save or Cancel.
+- **DataLoom [#348](https://github.com/c2siorg/dataloom/pull/348)** · *The first merge* — made string filtering case-insensitive, so `=`, `!=` and `contains` no longer miss "Cash" when you filter for "cash". Also gave the filter ops a consistent signature and return type, and added a test.
+- **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** — dataset preview returned a 500 on any CSV with empty cells, because NaN isn't valid JSON. Switched to pandas `.to_json()` so missing values serialize as `null`.
 
 <details>
-<summary><b>The other seven</b> — features and fixes, same repos</summary>
+<summary><b>The other eight</b> — features and fixes, all DataLoom</summary>
 <br/>
 
-- **DataLoom [#472](https://github.com/c2siorg/dataloom/pull/472)** — edit button and modal on dataset cards, so renaming a dataset no longer means leaving the home screen
-- **DataLoom [#470](https://github.com/c2siorg/dataloom/pull/470)** — export rendered charts and the correlation matrix as PNG
-- **DataLoom [#467](https://github.com/c2siorg/dataloom/pull/467)** — live password-strength meter on the password-creation forms
-- **DataLoom [#460](https://github.com/c2siorg/dataloom/pull/460)** — quick theme toggle in the top navbar
-- **DataLoom [#458](https://github.com/c2siorg/dataloom/pull/458)** — instant hover tooltips on the MenuNavbar buttons and tabs
-- **DataLoom [#453](https://github.com/c2siorg/dataloom/pull/453)** — real dark-mode styling for the Quality tab and assessment panel
-- **DataLoom [#408](https://github.com/c2siorg/dataloom/pull/408)** — hover tooltips on the toolbar icons (the first one — a small fix, deliberately)
+- **[#472](https://github.com/c2siorg/dataloom/pull/472)** — kebab menu with Edit and Delete on the Homescreen dataset cards; Edit opens a pre-filled "Edit Project" modal wired to `PATCH /projects/{id}`
+- **[#470](https://github.com/c2siorg/dataloom/pull/470)** — export charts and the correlation heatmap as PNG or SVG at 1x–3x resolution, through a reusable `DownloadImageButton` with tests
+- **[#467](https://github.com/c2siorg/dataloom/pull/467)** — reusable live password-strength meter on the sign-up, reset-password and change-password forms
+- **[#465](https://github.com/c2siorg/dataloom/pull/465)** — the `+` on the workspace tab bar now opens a dropdown of the Profiling views (Summary, Column Profiles, Charts, Quality); also fixes tooltip theming and popovers rendering under sticky table headers
+- **[#460](https://github.com/c2siorg/dataloom/pull/460)** — sun/moon theme toggle in the top navbar, so switching themes no longer means a trip into Settings
+- **[#458](https://github.com/c2siorg/dataloom/pull/458)** — replaced the slow native tooltips in `MenuNavbar` with instant custom ones, plus one-line explanations on the File, Data and Profiling tabs
+- **[#453](https://github.com/c2siorg/dataloom/pull/453)** — real dark mode on the Quality tab and Quality Assessment panel, swapping hardcoded Tailwind light classes for semantic theme tokens
+- **[#408](https://github.com/c2siorg/dataloom/pull/408)** — hover tooltips on the `MenuNavbar` toolbar icons (the first one — a small fix, deliberately)
 
 </details>
 
@@ -117,8 +111,7 @@ Every article is downstream of something I actually shipped.
 
 ## Now
 
-- **IIT Madras** — BS in Data Science & Applications, qualifier July 2026
-- **Open source** — contributing to [c2siorg/DataLoom](https://github.com/c2siorg/DataLoom) and [c2siorg/TensorMap](https://github.com/c2siorg/TensorMap); 12 PRs merged so far
+- **Open source** — contributing to [c2siorg/DataLoom](https://github.com/c2siorg/DataLoom) and [c2siorg/TensorMap](https://github.com/c2siorg/TensorMap); 14 PRs merged so far
 - **Next up** — the signing path in `bitcoin-wallet-rs`; a signed transaction on signet is the milestone
 
 <br/>
