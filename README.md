@@ -5,9 +5,25 @@
 
 <br/><br/>
 
-**systems · machine learning · bitcoin protocol** — self-taught, Jammu, India
+### AI Engineer — retrieval, agents, and the math underneath
 
-[portfolio](https://yadunandan-singh.pages.dev/) · [medium](https://medium.com/@yadunandan-ai-dev) · [linkedin](https://www.linkedin.com/in/yadunandan-singh-ai-dev/) · [email](mailto:yadunandansingh105@gmail.com)
+I build the layers most people import: vector stores, SVD, inference plumbing, wallet primitives.
+Self-taught · Jammu, India · IIT Madras BS in Data Science
+
+[**Portfolio**](https://yadunandan-singh.pages.dev/) · [**Writing**](https://medium.com/@yadunandan-ai-dev) · [**LinkedIn**](https://www.linkedin.com/in/yadunandan-singh-ai-dev/) · [**Email**](mailto:yadunandansingh105@gmail.com)
+
+<br/>
+
+![Python](https://img.shields.io/badge/Python-1a1b27?style=flat-square&logo=python&logoColor=667eea)
+![Rust](https://img.shields.io/badge/Rust-1a1b27?style=flat-square&logo=rust&logoColor=667eea)
+![TypeScript](https://img.shields.io/badge/TypeScript-1a1b27?style=flat-square&logo=typescript&logoColor=667eea)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-1a1b27?style=flat-square&logo=tensorflow&logoColor=667eea)
+![Ollama](https://img.shields.io/badge/Ollama-1a1b27?style=flat-square&logo=ollama&logoColor=667eea)
+![FastAPI](https://img.shields.io/badge/FastAPI-1a1b27?style=flat-square&logo=fastapi&logoColor=667eea)
+![Django](https://img.shields.io/badge/Django-1a1b27?style=flat-square&logo=django&logoColor=667eea)
+![React](https://img.shields.io/badge/React-1a1b27?style=flat-square&logo=react&logoColor=667eea)
+![WebAssembly](https://img.shields.io/badge/WebAssembly-1a1b27?style=flat-square&logo=webassembly&logoColor=667eea)
+![Docker](https://img.shields.io/badge/Docker-1a1b27?style=flat-square&logo=docker&logoColor=667eea)
 
 </div>
 
@@ -19,15 +35,32 @@
 
 That one rule produced everything below.
 
+<br/>
+
+## AI systems
+
+LLM-shaped work where the interesting part is what happens *before* the model is called — retrieval, grounding, and knowing which component is allowed to be wrong.
+
+| | |
+|:--|:--|
+| **[Prism-RAG](https://github.com/YADUNANDAN-SINGH/Prism-RAG)**<br/><sub>`rust · axum` `python` `react` `ollama` `docker`</sub> | A RAG pipeline with the lid off. Hand-rolled in-memory vector database in Rust (cosine similarity over 384-d embeddings), and a 3-panel UI that shows every retrieved chunk and the exact assembled prompt *before* a local LLM streams a single token. Built instead of importing LangChain. |
+| **[Lara — the agent on my portfolio](https://yadunandan-singh.pages.dev/)**<br/><sub>`react` `django` `python`</sub> | The site ships its own agent. Ask Lara about a project and she answers from a grounded knowledge base; ask for a résumé and she generates one targeted at the role you name. Merged-PR counts on the page are pulled live from the GitHub API, so the site can't quietly go stale. |
+| **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)**<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> | A CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic. |
+| **[GlassBox](https://github.com/YADUNANDAN-SINGH/GlassBox-Rust-SVD-recommendation-system)**<br/><sub>`rust` `leptos` `surrealdb` `wasm`</sub> | The entire recommendation engine — SVD, database, UI — compiled to WebAssembly and running in *your* browser tab. Embedded SurrealDB over IndexedDB. Zero servers, zero telemetry, zero inference bill. |
+
+<br/>
+
+## Foundations, rebuilt by hand
+
+The ML primitives, written out from the linear algebra rather than called.
+
 | The black box | What I built instead |
 |:--|:--|
 | `np.linalg.svd` | **[Image Compressor from Scratch](https://github.com/YADUNANDAN-SINGH/Image_Compression_via_Low-Rank_Matrix-_Approximation)** — SVD assembled by hand from the eigendecomposition of AᵀA, then pointed at lossy image compression with a live quality slider: drag `k`, watch the rank drop.<br/><sub>`python` `numpy` `flask`</sub> |
-| A recommender API on someone's server | **[GlassBox](https://github.com/YADUNANDAN-SINGH/GlassBox-Rust-SVD-recommendation-system)** — the entire recommendation engine (SVD, database, UI) compiled to WebAssembly and running in *your* browser tab. Embedded SurrealDB over IndexedDB; zero servers, zero telemetry.<br/><sub>`rust` `leptos` `surrealdb` `wasm`</sub> |
-| LangChain | **[Prism-RAG](https://github.com/YADUNANDAN-SINGH/Prism-RAG)** — a RAG pipeline with the lid off: a hand-rolled in-memory vector database in Rust (cosine similarity over 384-d embeddings), and a 3-panel UI that shows every retrieved chunk and the exact assembled prompt before a local LLM streams a single token.<br/><sub>`rust · axum` `python` `react` `ollama` `docker`</sub> |
-| "just ask an LLM to do the math" | **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)** — a CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic.<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> |
 | The password field | **[FaceAuth Notes](https://github.com/YADUNANDAN-SINGH/django-svd-face-auth)** — Eigenfaces written out from the linear algebra (mean face → centered matrix → SVD → projection weights) and wired in as the actual login for a Django notes app, with auto-augmented training shots per user.<br/><sub>`django` `opencv` `numpy` `docker`</sub> |
 | Wallet SDKs | **[bitcoin-wallet-rs](https://github.com/YADUNANDAN-SINGH/bitcoin-wallet-rs)** — key generation, wallet persistence, UTXO discovery and raw unsigned-transaction construction on signet, built directly on `secp256k1` and `rust-bitcoin` primitives. Signing is next.<br/><sub>`rust` `secp256k1` `signet`</sub> |
-| A PDF résumé | **[This portfolio + Lara](https://yadunandan-singh.pages.dev/)** — the site ships its own agent. Ask Lara about a project and she answers from a grounded knowledge base; ask for a résumé and she generates one targeted at the role you name. Merged-PR counts on the page are pulled live from the GitHub API, so the site can't quietly go stale.<br/><sub>`react` `django` `python`</sub> |
+
+<br/>
 
 ## Merged upstream
 
@@ -35,11 +68,11 @@ Anyone can push to their own repos. These went through someone else's review.
 
 **12 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 11 in DataLoom, 1 in TensorMap.
 
-- 🟣 **DataLoom** — [#455](https://github.com/c2siorg/dataloom/pull/455) moved linting off `pull_request_target` and onto `pull_request` + `workflow_run`, so fork PRs get linted without handing them a privileged token
-- 🟣 **DataLoom** — [#410](https://github.com/c2siorg/dataloom/pull/410) extended the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
-- 🟣 **DataLoom** — [#383](https://github.com/c2siorg/dataloom/pull/383) preview-before-persist flow for row-reducing transforms, so users validate output before it ever hits the pipeline
-- 🟣 **DataLoom** — [#348](https://github.com/c2siorg/dataloom/pull/348) fixed strict case-sensitivity in string filtering, plus NaN handling, dtype checks, and test coverage
-- 🟣 **TensorMap** — [#367](https://github.com/c2siorg/tensormap/pull/367) fixed a FastAPI 500 by repairing NaN → JSON serialization in dataset preview
+- **DataLoom [#455](https://github.com/c2siorg/dataloom/pull/455)** — moved linting off `pull_request_target` and onto `pull_request` + `workflow_run`, so fork PRs get linted without handing them a privileged token
+- **DataLoom [#410](https://github.com/c2siorg/dataloom/pull/410)** — extended the apply-preview workflow across DataLoom's entire transform layer (11+ modules)
+- **DataLoom [#383](https://github.com/c2siorg/dataloom/pull/383)** — preview-before-persist flow for row-reducing transforms, so users validate output before it ever hits the pipeline
+- **DataLoom [#348](https://github.com/c2siorg/dataloom/pull/348)** — fixed strict case-sensitivity in string filtering, plus NaN handling, dtype checks, and test coverage
+- **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** — fixed a FastAPI 500 by repairing NaN → JSON serialization in dataset preview
 
 <details>
 <summary><b>The other seven</b> — features and fixes, same repos</summary>
@@ -66,24 +99,30 @@ Anyone can push to their own repos. These went through someone else's review.
 
 </details>
 
+<br/>
+
 ## Writing
 
 Every article is downstream of something I actually shipped.
 
-- **[How to Find Your First Open Source Project in One Evening](https://medium.com/@yadunandan-ai-dev/how-to-find-your-first-open-source-project-in-one-evening-ab936a19d9dd)** — the method behind the merged PRs above: choose on maintainer responsiveness and community tone, not stars
-- **[ChatGPT Failed My Sister's Live Class, So I Built a Neuro-Symbolic Math Solver](https://medium.com/@yadunandan-ai-dev/chatgpt-failed-my-sisters-live-class-so-i-built-a-neuro-symbolic-ai-math-solver-from-scratch-38a809494b67)** — why perception and arithmetic should be two different components
 - **[Stop Vibe Coding](https://medium.com/@yadunandan-ai-dev/stop-vibe-coding-how-elite-developers-actually-use-ai-backed-by-real-research-da32f95c0039)** — spec-driven AI development, and what separates it from trusting the output because it *felt* right
 - **[Should You Be Scared of Agentic AI?](https://medium.com/@yadunandan-ai-dev/should-you-be-scared-of-agentic-ai-heres-the-reality-189088104d78)** — where agents actually stand, minus the panic
+- **[ChatGPT Failed My Sister's Live Class, So I Built a Neuro-Symbolic Math Solver](https://medium.com/@yadunandan-ai-dev/chatgpt-failed-my-sisters-live-class-so-i-built-a-neuro-symbolic-ai-math-solver-from-scratch-38a809494b67)** — why perception and arithmetic should be two different components
+- **[How to Find Your First Open Source Project in One Evening](https://medium.com/@yadunandan-ai-dev/how-to-find-your-first-open-source-project-in-one-evening-ab936a19d9dd)** — the method behind the merged PRs above: choose on maintainer responsiveness and community tone, not stars
 - **[Don't Be a Dumb Computer: SVD Explained](https://medium.com/@yadunandan-ai-dev/dont-be-a-dumb-computer-svd-explained-subtitle-i-built-a-youtube-recommender-to-finally-155eabfbcbe6)** — the recommender that finally made SVD click. Built first, written after.
 - **[I Stopped Solving Problems and Built a Tool Instead](https://medium.com/@yadunandan-ai-dev/i-stopped-solving-problems-and-built-a-tool-instead-how-a-visualizer-taught-me-real-linear-algebra-17ea52847001)** — how shipping a visualizer taught more linear algebra than the problem sets
 - **[Build Your Own Image Recognition Model](https://medium.com/@yadunandan-ai-dev/how-can-you-build-your-own-image-recognition-model-as-your-first-ai-project-090a20c3ec3e)** — a first AI project, end to end
 
+<br/>
+
 ## Now
 
-- IIT Madras — BS in Data Science & Applications, qualifier July 2026
-- Finishing the signing path in `bitcoin-wallet-rs` — a signed signet transaction is the next milestone
-- Still contributing to DataLoom; 12 merged and counting
-- The long game: GSoC and Summer of Bitcoin
+- **IIT Madras** — BS in Data Science & Applications, qualifier July 2026
+- **Shipping** the signing path in `bitcoin-wallet-rs` — a signed signet transaction is the next milestone
+- **Contributing** to DataLoom; 12 merged and counting
+- **The long game** — GSoC and Summer of Bitcoin
+
+<br/>
 
 ## Numbers
 
