@@ -134,6 +134,8 @@ Every article is downstream of something I actually shipped.
 ## Numbers
 
 <div align="center">
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=yadunandan-singh&theme=github_dark" alt="GitHub Profile Summary" width="100%"/>
+<br/><br/>
 <img height="165" src="stats.svg" alt="GitHub stats"/>
 <img height="165" src="https://github-readme-stats.shion.dev/api/top-langs/?username=YADUNANDAN-SINGH&layout=compact&hide_border=true&bg_color=00000000&title_color=667eea&text_color=8b95c9" alt="Top languages"/>
 </div>
