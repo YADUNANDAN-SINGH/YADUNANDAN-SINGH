@@ -28,7 +28,7 @@ I build the layers most people import — vector stores, SVD, inference plumbing
 
 <br/>
 
-<sub><b>18</b> merged upstream PRs &nbsp;·&nbsp; <b>69×</b> faster dtype inference on non-date columns &nbsp;·&nbsp; <b>0</b> LangChain imports</sub>
+<sub><b>18</b> merged upstream PRs &nbsp;·&nbsp; <b>69×</b> faster dtype inference on non-date columns &nbsp;·&nbsp; <b>~670-line</b> E2E & unit test suites shipped upstream</sub>
 
 </div>
 
@@ -36,40 +36,45 @@ I build the layers most people import — vector stores, SVD, inference plumbing
 
 ## Merged upstream
 
-Anyone can push to their own repos. These went through someone else's review.
+Production code reviewed, tested, and merged upstream across [c2siorg](https://github.com/c2siorg) repositories — focused on pandas data-layer performance, state architecture, and CI security.
 
-**18 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 17 in [DataLoom](https://github.com/c2siorg/dataloom), 1 in [TensorMap](https://github.com/c2siorg/tensormap). The recent ones are mostly backend performance and correctness work on DataLoom's pandas data layer.
+**18 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 17 in [DataLoom](https://github.com/c2siorg/dataloom), 1 in [TensorMap](https://github.com/c2siorg/tensormap).
 
-### Backend & performance
+### Backend, architecture & security
 
 - **DataLoom [#517](https://github.com/c2siorg/dataloom/pull/517)** · *Perf* — dtype inference ran on every dataset read, walking every value of every text column through regex checks. Added a seeded, one-sided sampled pre-gate that can only *reject* a column, never convert one — conversion still goes through the full path, so correctness is unchanged. On 1M-row columns: free text **0.481s → 0.007s**, order IDs **0.485s → 0.007s**, real dates unchanged.
 - **DataLoom [#521](https://github.com/c2siorg/dataloom/pull/521)** · *Perf* — every endpoint re-parsed the working copy from disk on every request. Added a size-bounded LRU cache validated against an `(mtime_ns, size, inode)` fingerprint — plus invalidate-on-write in a `finally` block, because a fingerprint alone can't see a same-tick, same-length rewrite (a cell edit `3 → 4`) on coarse-timestamp filesystems.
 - **DataLoom [#526](https://github.com/c2siorg/dataloom/pull/526)** · *Architecture* — undo used to replay the entire change log, and redo didn't exist. Replaced it with snapshot-based undo **and** redo: new DB model + migration, backend endpoints, a `useUndoState` hook, and a ~670-line test suite plus an E2E spec.
 - **DataLoom [#507](https://github.com/c2siorg/dataloom/pull/507)** · *Perf* — pagination only existed inside the preview branch, so every write (upload, save, undo, revert, transform, append, pipeline) returned the full dataset — ~9 MB per save on a 121k-row project. Lifted into a shared `paginate_dataframe()` helper and updated the frontend to match.
 - **DataLoom [#455](https://github.com/c2siorg/dataloom/pull/455)** · *CI security* — lint was blocked on every fork PR under `pull_request_target`. Split it along the trust boundary: read-only `lint.yml` on `pull_request`, and a `lint-comment.yml` on `workflow_run` that holds the write permission. Closes the pwn-request hole instead of bypassing the guard.
-- **DataLoom [#488](https://github.com/c2siorg/dataloom/pull/488)** · *Feature* — a `standardizeDates` transformation for columns with mixed date formats, wired through the transform service, the Quality view, and a new form with tests.
-- **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** · *Fix* — dataset preview 500'd on any CSV with empty cells, because NaN isn't valid JSON. Switched to pandas `.to_json()` so missing values serialize as `null`.
-
-### Data workflow
-
-- **DataLoom [#410](https://github.com/c2siorg/dataloom/pull/410)** — preview-before-apply across all 12 transformation forms (GroupBy, Pivot, Melt, Sort, Cast, FillEmpty and the rest) through a shared `usePreviewSave` hook.
-- **DataLoom [#383](https://github.com/c2siorg/dataloom/pull/383)** — a preview step for row-reducing transforms (Sample, Filter, Drop Duplicates). Every Apply used to permanently overwrite the working CSV, so sampling 300→100 rows and then trying 120 failed silently.
-- **DataLoom [#348](https://github.com/c2siorg/dataloom/pull/348)** · *The first merge* — case-insensitive string filtering, so `=`, `!=` and `contains` stop missing "Cash" when you filter for "cash"; consistent signatures for the filter ops, plus a test.
 
 <details>
-<summary><b>The other eight</b> — frontend features and fixes, all DataLoom</summary>
+<summary><strong>The other 13 merged PRs</strong> — data workflow hooks, preview-before-apply transforms, date standardization, JSON serialization fixes, and frontend features across DataLoom & TensorMap</summary>
 <br/>
 
-- **[#472](https://github.com/c2siorg/dataloom/pull/472)** — kebab menu with Edit and Delete on the Homescreen dataset cards; Edit opens a pre-filled "Edit Project" modal wired to `PATCH /projects/{id}`
-- **[#470](https://github.com/c2siorg/dataloom/pull/470)** — export charts and the correlation heatmap as images through a reusable `DownloadImageButton`, with tests
-- **[#467](https://github.com/c2siorg/dataloom/pull/467)** — reusable live password-strength meter on the sign-up, reset-password and change-password forms
-- **[#465](https://github.com/c2siorg/dataloom/pull/465)** — the `+` on the workspace tab bar opens a dropdown of the Profiling views; also fixes tooltip theming and popovers rendering under sticky table headers
-- **[#460](https://github.com/c2siorg/dataloom/pull/460)** — sun/moon theme toggle in the top navbar
-- **[#458](https://github.com/c2siorg/dataloom/pull/458)** — instant custom tooltips in `MenuNavbar`, replacing slow native ones
-- **[#453](https://github.com/c2siorg/dataloom/pull/453)** — real dark mode on the Quality tab, swapping hardcoded Tailwind light classes for semantic theme tokens
-- **[#408](https://github.com/c2siorg/dataloom/pull/408)** — hover tooltips on the toolbar icons (the first one — small on purpose)
+- **DataLoom [#488](https://github.com/c2siorg/dataloom/pull/488)** · *Feature* — a `standardizeDates` transformation for columns with mixed date formats, wired through the transform service, the Quality view, and a new form with tests.
+- **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** · *Fix* — dataset preview 500'd on any CSV with empty cells, because NaN isn't valid JSON. Switched to pandas `.to_json()` so missing values serialize as `null`.
+- **DataLoom [#410](https://github.com/c2siorg/dataloom/pull/410)** · *Data workflow* — preview-before-apply across all 12 transformation forms (GroupBy, Pivot, Melt, Sort, Cast, FillEmpty and the rest) through a shared `usePreviewSave` hook.
+- **DataLoom [#383](https://github.com/c2siorg/dataloom/pull/383)** · *Data workflow* — a preview step for row-reducing transforms (Sample, Filter, Drop Duplicates). Every Apply used to permanently overwrite the working CSV, so sampling 300→100 rows and then trying 120 failed silently.
+- **DataLoom [#348](https://github.com/c2siorg/dataloom/pull/348)** · *The first merge* — case-insensitive string filtering, so `=`, `!=` and `contains` stop missing "Cash" when you filter for "cash"; consistent signatures for the filter ops, plus a test.
+- **DataLoom [#472](https://github.com/c2siorg/dataloom/pull/472)** — kebab menu with Edit and Delete on the Homescreen dataset cards; Edit opens a pre-filled "Edit Project" modal wired to `PATCH /projects/{id}`
+- **DataLoom [#470](https://github.com/c2siorg/dataloom/pull/470)** — export charts and the correlation heatmap as images through a reusable `DownloadImageButton`, with tests
+- **DataLoom [#467](https://github.com/c2siorg/dataloom/pull/467)** — reusable live password-strength meter on the sign-up, reset-password and change-password forms
+- **DataLoom [#465](https://github.com/c2siorg/dataloom/pull/465)** — the `+` on the workspace tab bar opens a dropdown of the Profiling views; also fixes tooltip theming and popovers rendering under sticky table headers
+- **DataLoom [#460](https://github.com/c2siorg/dataloom/pull/460)** — sun/moon theme toggle in the top navbar
+- **DataLoom [#458](https://github.com/c2siorg/dataloom/pull/458)** — instant custom tooltips in `MenuNavbar`, replacing slow native ones
+- **DataLoom [#453](https://github.com/c2siorg/dataloom/pull/453)** — real dark mode on the Quality tab, swapping hardcoded Tailwind light classes for semantic theme tokens
+- **DataLoom [#408](https://github.com/c2siorg/dataloom/pull/408)** — hover tooltips on the toolbar icons (the first one — small on purpose)
 
 </details>
+
+<br/>
+
+### In flight / Upstream roadmap
+
+- **DataLoom, scaling up** — running slow operations as background jobs with progress reporting ([#540](https://github.com/c2siorg/dataloom/pull/540)), and lifting the 10 MB upload cap with streamed upload and sample-based profiling ([#533](https://github.com/c2siorg/dataloom/issues/533))
+- **DataLoom, keeping it fast** — a `pytest-benchmark` suite in CI that fails the build on performance regressions
+- **Next up** — the signing path in `bitcoin-wallet-rs`; a signed transaction on signet is the milestone
 
 <br/>
 
@@ -79,10 +84,10 @@ LLM-shaped work where the interesting part is what happens *before* the model is
 
 | | |
 |:--|:--|
-| **[Prism-RAG](https://github.com/YADUNANDAN-SINGH/Prism-RAG)**<br/><sub>`rust · axum` `python` `react` `ollama` `docker`</sub> | A RAG pipeline with the lid off. Hand-rolled in-memory vector store in Rust (cosine similarity over 384-d MiniLM embeddings), and a 3-panel UI that shows every retrieved chunk and the exact assembled prompt *before* a local LLM streams a single token. Built instead of importing LangChain. Runs over a seeded corpus today; document ingestion and chunking are next. |
-| **[Lara — the agent on my portfolio](https://yadunandan-singh.pages.dev/)**<br/><sub>`react` `django` `python`</sub> | The site ships its own agent. Ask Lara about a project and she answers from a grounded knowledge base; ask for a résumé and she generates one targeted at the role you name. Merged-PR counts on the page are pulled live from the GitHub API, so the site can't quietly go stale. |
-| **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)**<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> | A CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic. |
+| **[Prism-RAG](https://github.com/YADUNANDAN-SINGH/Prism-RAG)**<br/><sub>`rust · axum` `python` `react` `ollama` `docker`</sub> | A RAG pipeline with the lid off. Hand-rolled in-memory vector store in Rust (cosine similarity over 384-d MiniLM embeddings), and a 3-panel UI that provides deterministic retrieval observability — showing every retrieved chunk, cosine score, and the exact assembled prompt *before* a local LLM streams a single token. Runs over a seeded corpus today; document ingestion and chunking are next. |
 | **[GlassBox](https://github.com/YADUNANDAN-SINGH/GlassBox-Rust-SVD-recommendation-system)**<br/><sub>`rust` `leptos` `surrealdb` `wasm`</sub> | The entire recommendation engine — SVD, database, UI — compiled to WebAssembly and running in *your* browser tab. Embedded SurrealDB over IndexedDB. Zero servers, zero telemetry, zero inference bill. |
+| **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)**<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> | A CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic. |
+| **[Lara — the agent on my portfolio](https://yadunandan-singh.pages.dev/)**<br/><sub>`react` `django` `python`</sub> | The site ships its own agent. Ask Lara about a project and she answers from a grounded knowledge base; ask for a résumé and she generates one targeted at the role you name. Merged-PR counts on the page are pulled live from the GitHub API, so the site can't quietly go stale. |
 
 <br/>
 
@@ -109,39 +114,21 @@ The ML primitives, written out from the linear algebra rather than called.
 
 <br/>
 
-## Now
-
-- **DataLoom, scaling up** — running slow operations as background jobs with progress reporting ([#540](https://github.com/c2siorg/dataloom/pull/540)), and lifting the 10 MB upload cap with streamed upload and sample-based profiling ([#533](https://github.com/c2siorg/dataloom/issues/533))
-- **DataLoom, keeping it fast** — a `pytest-benchmark` suite in CI that fails the build on performance regressions
-- **Next up** — the signing path in `bitcoin-wallet-rs`; a signed transaction on signet is the milestone
-
-<br/>
-
 ## Writing
 
 Every article is downstream of something I actually shipped.
 
 - **[Stop Vibe Coding](https://medium.com/@yadunandan-ai-dev/stop-vibe-coding-how-elite-developers-actually-use-ai-backed-by-real-research-da32f95c0039)** — spec-driven AI development, and what separates it from trusting the output because it *felt* right
-- **[Should You Be Scared of Agentic AI?](https://medium.com/@yadunandan-ai-dev/should-you-be-scared-of-agentic-ai-heres-the-reality-189088104d78)** — where agents actually stand, minus the panic
 - **[ChatGPT Failed My Sister's Live Class, So I Built a Neuro-Symbolic Math Solver](https://medium.com/@yadunandan-ai-dev/chatgpt-failed-my-sisters-live-class-so-i-built-a-neuro-symbolic-ai-math-solver-from-scratch-38a809494b67)** — why perception and arithmetic should be two different components
-- **[How to Find Your First Open Source Project in One Evening](https://medium.com/@yadunandan-ai-dev/how-to-find-your-first-open-source-project-in-one-evening-ab936a19d9dd)** — the method behind the merged PRs above: choose on maintainer responsiveness and community tone, not stars
 - **[Don't Be a Dumb Computer: SVD Explained](https://medium.com/@yadunandan-ai-dev/dont-be-a-dumb-computer-svd-explained-subtitle-i-built-a-youtube-recommender-to-finally-155eabfbcbe6)** — the recommender that finally made SVD click. Built first, written after.
+- **[How to Find Your First Open Source Project in One Evening](https://medium.com/@yadunandan-ai-dev/how-to-find-your-first-open-source-project-in-one-evening-ab936a19d9dd)** — the method behind the merged PRs above: choose on maintainer responsiveness and community tone, not stars
+
+<details>
+<summary>Earlier articles</summary>
+<br/>
+
+- **[Should You Be Scared of Agentic AI?](https://medium.com/@yadunandan-ai-dev/should-you-be-scared-of-agentic-ai-heres-the-reality-189088104d78)** — where agents actually stand, minus the panic
 - **[I Stopped Solving Problems and Built a Tool Instead](https://medium.com/@yadunandan-ai-dev/i-stopped-solving-problems-and-built-a-tool-instead-how-a-visualizer-taught-me-real-linear-algebra-17ea52847001)** — how shipping a visualizer taught more linear algebra than the problem sets
 - **[Build Your Own Image Recognition Model](https://medium.com/@yadunandan-ai-dev/how-can-you-build-your-own-image-recognition-model-as-your-first-ai-project-090a20c3ec3e)** — a first AI project, end to end
 
-<br/>
-
-## Numbers
-
-<div align="center">
-<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=yadunandan-singh&theme=github_dark" alt="GitHub Profile Summary" width="100%"/>
-<br/><br/>
-<img height="165" src="stats.svg" alt="GitHub stats"/>
-<img height="165" src="https://github-readme-stats.shion.dev/api/top-langs/?username=YADUNANDAN-SINGH&layout=compact&hide_border=true&bg_color=00000000&title_color=667eea&text_color=8b95c9" alt="Top languages"/>
-</div>
-
-<br/>
-
-<div align="center">
-<sub>The banner above is a hand-written SVG. Of course it is.</sub>
-</div>
+</details>
