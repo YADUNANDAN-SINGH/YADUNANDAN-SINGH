@@ -28,7 +28,7 @@ I build the layers most people import — vector stores, SVD, inference plumbing
 
 <br/>
 
-<sub><b>18</b> merged upstream PRs &nbsp;·&nbsp; <b>69×</b> faster dtype inference on non-date columns &nbsp;·&nbsp; <b>~670-line</b> E2E & unit test suites shipped upstream</sub>
+<sub><a href="https://github.com/pulls?q=is%3Apr+author%3AYADUNANDAN-SINGH+org%3Ac2siorg+is%3Amerged"><b>20</b> merged upstream PRs</a> &nbsp;·&nbsp; <b>69×</b> faster dtype inference on non-date columns &nbsp;·&nbsp; <b>~10×</b> faster data-quality assessment on 100 MB files</sub>
 
 </div>
 
@@ -38,20 +38,22 @@ I build the layers most people import — vector stores, SVD, inference plumbing
 
 Production code reviewed, tested, and merged upstream across [c2siorg](https://github.com/c2siorg) repositories — focused on pandas data-layer performance, state architecture, and CI security.
 
-**18 merged pull requests** across two [c2siorg](https://github.com/c2siorg) projects — 17 in [DataLoom](https://github.com/c2siorg/dataloom), 1 in [TensorMap](https://github.com/c2siorg/tensormap).
+**[20 merged pull requests](https://github.com/pulls?q=is%3Apr+author%3AYADUNANDAN-SINGH+org%3Ac2siorg+is%3Amerged)** across two [c2siorg](https://github.com/c2siorg) projects — 19 in [DataLoom](https://github.com/c2siorg/dataloom), 1 in [TensorMap](https://github.com/c2siorg/tensormap). 18 of the 19 DataLoom PRs started from an issue I filed first ([24 issues](https://github.com/issues?q=is%3Aissue+author%3AYADUNANDAN-SINGH+org%3Ac2siorg) so far).
 
 ### Backend, architecture & security
 
 - **DataLoom [#517](https://github.com/c2siorg/dataloom/pull/517)** · *Perf* — dtype inference ran on every dataset read, walking every value of every text column through regex checks. Added a seeded, one-sided sampled pre-gate that can only *reject* a column, never convert one — conversion still goes through the full path, so correctness is unchanged. On 1M-row columns: free text **0.481s → 0.007s**, order IDs **0.485s → 0.007s**, real dates unchanged.
+- **DataLoom [#536](https://github.com/c2siorg/dataloom/pull/536)** · *Scaling* — the upload limit was only checked after the whole body had been read (and the file was read twice, once to count and once to copy). Added a pure-ASGI middleware that counts bytes as the body streams in and answers 413 the moment it passes the budget, a single-pass `.part` → `os.replace` write so a failed upload leaves nothing behind, and sampled pre-gates in profiling. `assess_quality` on a 612k-row, 100 MB CSV: **155.1s → 14.5s**. Parts 1 and 3 of [#533](https://github.com/c2siorg/dataloom/issues/533).
 - **DataLoom [#521](https://github.com/c2siorg/dataloom/pull/521)** · *Perf* — every endpoint re-parsed the working copy from disk on every request. Added a size-bounded LRU cache validated against an `(mtime_ns, size, inode)` fingerprint — plus invalidate-on-write in a `finally` block, because a fingerprint alone can't see a same-tick, same-length rewrite (a cell edit `3 → 4`) on coarse-timestamp filesystems.
 - **DataLoom [#526](https://github.com/c2siorg/dataloom/pull/526)** · *Architecture* — undo used to replay the entire change log, and redo didn't exist. Replaced it with snapshot-based undo **and** redo: new DB model + migration, backend endpoints, a `useUndoState` hook, and a ~670-line test suite plus an E2E spec.
 - **DataLoom [#507](https://github.com/c2siorg/dataloom/pull/507)** · *Perf* — pagination only existed inside the preview branch, so every write (upload, save, undo, revert, transform, append, pipeline) returned the full dataset — ~9 MB per save on a 121k-row project. Lifted into a shared `paginate_dataframe()` helper and updated the frontend to match.
 - **DataLoom [#455](https://github.com/c2siorg/dataloom/pull/455)** · *CI security* — lint was blocked on every fork PR under `pull_request_target`. Split it along the trust boundary: read-only `lint.yml` on `pull_request`, and a `lint-comment.yml` on `workflow_run` that holds the write permission. Closes the pwn-request hole instead of bypassing the guard.
 
 <details>
-<summary><strong>The other 13 merged PRs</strong> — data workflow hooks, preview-before-apply transforms, date standardization, JSON serialization fixes, and frontend features across DataLoom & TensorMap</summary>
+<summary><strong>The other 14 merged PRs</strong> — column virtualization, preview-before-apply transforms, date standardization, JSON serialization fixes, and frontend features across DataLoom & TensorMap</summary>
 <br/>
 
+- **DataLoom [#554](https://github.com/c2siorg/dataloom/pull/554)** · *Frontend perf* — rows were paginated but every column was rendered, so a 300-column CSV at 100 rows per page put 30,000 `<td>`s in the DOM. Above 50 columns, `Table` now renders only the columns in the horizontal viewport, with spacer cells for alignment and absolute indices preserved, so sort, drag-reorder and cell edits work unchanged.
 - **DataLoom [#488](https://github.com/c2siorg/dataloom/pull/488)** · *Feature* — a `standardizeDates` transformation for columns with mixed date formats, wired through the transform service, the Quality view, and a new form with tests.
 - **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** · *Fix* — dataset preview 500'd on any CSV with empty cells, because NaN isn't valid JSON. Switched to pandas `.to_json()` so missing values serialize as `null`.
 - **DataLoom [#410](https://github.com/c2siorg/dataloom/pull/410)** · *Data workflow* — preview-before-apply across all 12 transformation forms (GroupBy, Pivot, Melt, Sort, Cast, FillEmpty and the rest) through a shared `usePreviewSave` hook.
@@ -72,8 +74,8 @@ Production code reviewed, tested, and merged upstream across [c2siorg](https://g
 
 ### In flight / Upstream roadmap
 
-- **DataLoom, scaling up** — running slow operations as background jobs with progress reporting ([#540](https://github.com/c2siorg/dataloom/pull/540)), and lifting the 10 MB upload cap with streamed upload and sample-based profiling ([#533](https://github.com/c2siorg/dataloom/issues/533))
-- **DataLoom, keeping it fast** — a `pytest-benchmark` suite in CI that fails the build on performance regressions
+- **DataLoom, scaling up** — pipeline runs and reverts as background jobs with progress and cancel ([#540](https://github.com/c2siorg/dataloom/pull/540)), then the rest of [#533](https://github.com/c2siorg/dataloom/issues/533): memory guardrails, and raising the default upload cap from 10 MB to 100 MB
+- **DataLoom, keeping it fast** — a `pytest-benchmark` suite in CI that fails PRs on performance regressions ([#563](https://github.com/c2siorg/dataloom/pull/563))
 - **Next up** — the signing path in `bitcoin-wallet-rs`; a signed transaction on signet is the milestone
 
 <br/>
@@ -85,7 +87,7 @@ LLM-shaped work where the interesting part is what happens *before* the model is
 | | |
 |:--|:--|
 | **[Prism-RAG](https://github.com/YADUNANDAN-SINGH/Prism-RAG)**<br/><sub>`rust · axum` `python` `react` `ollama` `docker`</sub> | A RAG pipeline with the lid off. Hand-rolled in-memory vector store in Rust (cosine similarity over 384-d MiniLM embeddings), and a 3-panel UI that provides deterministic retrieval observability — showing every retrieved chunk, cosine score, and the exact assembled prompt *before* a local LLM streams a single token. Runs over a seeded corpus today; document ingestion and chunking are next. |
-| **[GlassBox](https://github.com/YADUNANDAN-SINGH/GlassBox-Rust-SVD-recommendation-system)**<br/><sub>`rust` `leptos` `surrealdb` `wasm`</sub> | The entire recommendation engine — SVD, database, UI — compiled to WebAssembly and running in *your* browser tab. Embedded SurrealDB over IndexedDB. Zero servers, zero telemetry, zero inference bill. |
+| **[GlassBox](https://github.com/YADUNANDAN-SINGH/glassbox)**<br/><sub>`rust` `leptos` `surrealdb` `wasm`</sub> | The entire recommendation engine — SVD, database, UI — compiled to WebAssembly and running in *your* browser tab. Embedded SurrealDB over IndexedDB. Zero servers, zero telemetry, zero inference bill. |
 | **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)**<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> | A CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic. |
 | **[Lara — the agent on my portfolio](https://yadunandan-singh.pages.dev/)**<br/><sub>`react` `django` `python`</sub> | The site ships its own agent. Ask Lara about a project and she answers from a grounded knowledge base; ask for a résumé and she generates one targeted at the role you name. Merged-PR counts on the page are pulled live from the GitHub API, so the site can't quietly go stale. |
 
@@ -97,7 +99,7 @@ The ML primitives, written out from the linear algebra rather than called.
 
 | The black box | What I built instead |
 |:--|:--|
-| `np.linalg.svd` | **[Image Compressor from Scratch](https://github.com/YADUNANDAN-SINGH/Image_Compression_via_Low-Rank_Matrix-_Approximation)** — SVD assembled by hand from the eigendecomposition of AᵀA, then pointed at lossy image compression with a live quality slider: drag `k`, watch the rank drop.<br/><sub>`python` `numpy` `flask`</sub> |
+| `np.linalg.svd` | **[Image Compressor from Scratch](https://github.com/YADUNANDAN-SINGH/svd-image-compression)** — SVD assembled by hand from the eigendecomposition of AᵀA, then pointed at lossy image compression with a live quality slider: drag `k`, watch the rank drop.<br/><sub>`python` `numpy` `flask`</sub> |
 | The password field | **[FaceAuth Notes](https://github.com/YADUNANDAN-SINGH/django-svd-face-auth)** — Eigenfaces written out from the linear algebra (mean face → centered matrix → SVD → projection weights) and wired in as the actual login for a Django notes app, with auto-augmented training shots per user.<br/><sub>`django` `opencv` `numpy` `docker`</sub> |
 | Wallet SDKs | **[bitcoin-wallet-rs](https://github.com/YADUNANDAN-SINGH/bitcoin-wallet-rs)** — key generation, wallet persistence, UTXO discovery and raw unsigned-transaction construction on signet, built directly on `secp256k1` and `rust-bitcoin` primitives. Signing is next.<br/><sub>`rust` `secp256k1` `signet`</sub> |
 
@@ -106,9 +108,8 @@ The ML primitives, written out from the linear algebra rather than called.
 <br/>
 
 - **[YouTube Recommender with SVD](https://github.com/YADUNANDAN-SINGH/YouTube-video-recommendation-model-with-SVD)** — TF-IDF + TruncatedSVD taste vectors built from videos you liked *and* the ones you hated. CLI + Flask UI. The project that started the whole SVD obsession.
-- **[Geometric Transformation Visualizer](https://github.com/YADUNANDAN-SINGH/Geometric-Transformation-Visualizer-)** — type any 2×2 matrix, watch the plane move. Built to make MIT 18.06 tangible; determinant-as-area included.
+- **[Geometric Transformation Visualizer](https://github.com/YADUNANDAN-SINGH/geometric-transformation-visualizer)** — type any 2×2 matrix, watch the plane move. Built to make MIT 18.06 tangible; determinant-as-area included.
 - **[AI Image Recognition Webapp](https://github.com/YADUNANDAN-SINGH/AI-Image-Recognition-webapp)** — a custom CNN trained on CIFAR-10 behind a drag-and-drop Flask frontend, with top-3 confidence scores.
-- **[Delhi-NCR Property Price Predictor](https://github.com/YADUNANDAN-SINGH/Delhi-NCR-property-price-predictor)** — auto-cleaning pipeline for messy real-estate listings plus a model bake-off, shipping the winner as a pickled artifact.
 
 </details>
 
