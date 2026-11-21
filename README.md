@@ -28,7 +28,7 @@ I build the layers most people import — vector stores, SVD, inference plumbing
 
 <br/>
 
-<sub><a href="https://github.com/pulls?q=is%3Apr+author%3AYADUNANDAN-SINGH+org%3Ac2siorg+is%3Amerged"><b>20</b> merged upstream PRs</a> &nbsp;·&nbsp; <b>69×</b> faster dtype inference on non-date columns &nbsp;·&nbsp; <b>~10×</b> faster data-quality assessment on 100 MB files</sub>
+<sub><a href="https://github.com/pulls?q=is%3Apr+author%3AYADUNANDAN-SINGH+org%3Ac2siorg+is%3Amerged"><b>22</b> merged upstream PRs</a> &nbsp;·&nbsp; <b>69×</b> faster dtype inference on non-date columns &nbsp;·&nbsp; <b>~10×</b> faster data-quality assessment on 100 MB files</sub>
 
 </div>
 
@@ -36,23 +36,25 @@ I build the layers most people import — vector stores, SVD, inference plumbing
 
 ## Merged upstream
 
-Production code reviewed, tested, and merged upstream across [c2siorg](https://github.com/c2siorg) repositories — focused on pandas data-layer performance, state architecture, and CI security.
+Production code reviewed, tested, and merged upstream across [c2siorg](https://github.com/c2siorg) repositories — focused on pandas data-layer performance, scaling, state architecture, and CI.
 
-**[20 merged pull requests](https://github.com/pulls?q=is%3Apr+author%3AYADUNANDAN-SINGH+org%3Ac2siorg+is%3Amerged)** across two [c2siorg](https://github.com/c2siorg) projects — 19 in [DataLoom](https://github.com/c2siorg/dataloom), 1 in [TensorMap](https://github.com/c2siorg/tensormap). 18 of the 19 DataLoom PRs started from an issue I filed first ([24 issues](https://github.com/issues?q=is%3Aissue+author%3AYADUNANDAN-SINGH+org%3Ac2siorg) so far).
+**[22 merged pull requests](https://github.com/pulls?q=is%3Apr+author%3AYADUNANDAN-SINGH+org%3Ac2siorg+is%3Amerged)** across two [c2siorg](https://github.com/c2siorg) projects since June 2026 — 21 in [DataLoom](https://github.com/c2siorg/dataloom), 1 in [TensorMap](https://github.com/c2siorg/tensormap). 20 of the 21 DataLoom PRs started from an issue I filed first ([25 issues](https://github.com/issues?q=is%3Aissue+author%3AYADUNANDAN-SINGH+org%3Ac2siorg) so far).
 
-### Backend, architecture & security
+### Backend, scaling & CI
 
-- **DataLoom [#517](https://github.com/c2siorg/dataloom/pull/517)** · *Perf* — dtype inference ran on every dataset read, walking every value of every text column through regex checks. Added a seeded, one-sided sampled pre-gate that can only *reject* a column, never convert one — conversion still goes through the full path, so correctness is unchanged. On 1M-row columns: free text **0.481s → 0.007s**, order IDs **0.485s → 0.007s**, real dates unchanged.
 - **DataLoom [#536](https://github.com/c2siorg/dataloom/pull/536)** · *Scaling* — the upload limit was only checked after the whole body had been read (and the file was read twice, once to count and once to copy). Added a pure-ASGI middleware that counts bytes as the body streams in and answers 413 the moment it passes the budget, a single-pass `.part` → `os.replace` write so a failed upload leaves nothing behind, and sampled pre-gates in profiling. `assess_quality` on a 612k-row, 100 MB CSV: **155.1s → 14.5s**. Parts 1 and 3 of [#533](https://github.com/c2siorg/dataloom/issues/533).
+- **DataLoom [#517](https://github.com/c2siorg/dataloom/pull/517)** · *Perf* — dtype inference ran on every dataset read, walking every value of every text column through regex checks. Added a seeded, one-sided sampled pre-gate that can only *reject* a column, never convert one — conversion still goes through the full path, so correctness is unchanged. On 1M-row columns: free text **0.481s → 0.007s**, order IDs **0.485s → 0.007s**, real dates unchanged.
+- **DataLoom [#540](https://github.com/c2siorg/dataloom/pull/540)** · *Scaling* — every pipeline Run and revert ran inside one HTTP request. With a 100 MB CSV and a 180-step pipeline, the client gave up at 30 s, the server finished anyway at 36.9 s, and the retry failed because the first run had already written its columns — while a read of the same project waited 28 s behind the write lock. Moved Runs and reverts to background jobs: `202` with a job id, a `jobs` table tracking progress, and cancel before anything is written. Phase 1 of 3 of [#537](https://github.com/c2siorg/dataloom/issues/537).
+- **DataLoom [#563](https://github.com/c2siorg/dataloom/pull/563)** · *CI perf* — a `pytest-benchmark` suite (11 benchmarks on a fixed-seed 100k-row CSV: dtype inference, reads, five Operations, profiling, quality assessment) plus a *Backend Benchmarks* check that times `main` and the PR on the same runner and **fails the PR if anything gets more than 50% slower**. The suite also runs untimed in the normal test job, so it can't rot. Read-only token, same trust boundary as `lint.yml`.
 - **DataLoom [#521](https://github.com/c2siorg/dataloom/pull/521)** · *Perf* — every endpoint re-parsed the working copy from disk on every request. Added a size-bounded LRU cache validated against an `(mtime_ns, size, inode)` fingerprint — plus invalidate-on-write in a `finally` block, because a fingerprint alone can't see a same-tick, same-length rewrite (a cell edit `3 → 4`) on coarse-timestamp filesystems.
 - **DataLoom [#526](https://github.com/c2siorg/dataloom/pull/526)** · *Architecture* — undo used to replay the entire change log, and redo didn't exist. Replaced it with snapshot-based undo **and** redo: new DB model + migration, backend endpoints, a `useUndoState` hook, and a ~670-line test suite plus an E2E spec.
-- **DataLoom [#507](https://github.com/c2siorg/dataloom/pull/507)** · *Perf* — pagination only existed inside the preview branch, so every write (upload, save, undo, revert, transform, append, pipeline) returned the full dataset — ~9 MB per save on a 121k-row project. Lifted into a shared `paginate_dataframe()` helper and updated the frontend to match.
 - **DataLoom [#455](https://github.com/c2siorg/dataloom/pull/455)** · *CI security* — lint was blocked on every fork PR under `pull_request_target`. Split it along the trust boundary: read-only `lint.yml` on `pull_request`, and a `lint-comment.yml` on `workflow_run` that holds the write permission. Closes the pwn-request hole instead of bypassing the guard.
 
 <details>
-<summary><strong>The other 14 merged PRs</strong> — column virtualization, preview-before-apply transforms, date standardization, JSON serialization fixes, and frontend features across DataLoom & TensorMap</summary>
+<summary><strong>The other 15 merged PRs</strong> — column virtualization, preview-before-apply transforms, date standardization, JSON serialization fixes, and frontend features across DataLoom & TensorMap</summary>
 <br/>
 
+- **DataLoom [#507](https://github.com/c2siorg/dataloom/pull/507)** · *Perf* — pagination only existed inside the preview branch, so every write (upload, save, undo, revert, transform, append, pipeline) returned the full dataset — ~9 MB per save on a 121k-row project. Lifted into a shared `paginate_dataframe()` helper and updated the frontend to match.
 - **DataLoom [#554](https://github.com/c2siorg/dataloom/pull/554)** · *Frontend perf* — rows were paginated but every column was rendered, so a 300-column CSV at 100 rows per page put 30,000 `<td>`s in the DOM. Above 50 columns, `Table` now renders only the columns in the horizontal viewport, with spacer cells for alignment and absolute indices preserved, so sort, drag-reorder and cell edits work unchanged.
 - **DataLoom [#488](https://github.com/c2siorg/dataloom/pull/488)** · *Feature* — a `standardizeDates` transformation for columns with mixed date formats, wired through the transform service, the Quality view, and a new form with tests.
 - **TensorMap [#367](https://github.com/c2siorg/tensormap/pull/367)** · *Fix* — dataset preview 500'd on any CSV with empty cells, because NaN isn't valid JSON. Switched to pandas `.to_json()` so missing values serialize as `null`.
@@ -72,11 +74,11 @@ Production code reviewed, tested, and merged upstream across [c2siorg](https://g
 
 <br/>
 
-### In flight / Upstream roadmap
+### What's next for DataLoom
 
-- **DataLoom, scaling up** — pipeline runs and reverts as background jobs with progress and cancel ([#540](https://github.com/c2siorg/dataloom/pull/540)), then the rest of [#533](https://github.com/c2siorg/dataloom/issues/533): memory guardrails, and raising the default upload cap from 10 MB to 100 MB
-- **DataLoom, keeping it fast** — a `pytest-benchmark` suite in CI that fails PRs on performance regressions ([#563](https://github.com/c2siorg/dataloom/pull/563))
-- **Next up** — the signing path in `bitcoin-wallet-rs`; a signed transaction on signet is the milestone
+- **[RFC #601](https://github.com/c2siorg/dataloom/issues/601)** · *Scope check, open* — DataLoom already profiles every column and maps quality issues to fixes. The RFC proposes three independent steps on top of that: **(1)** rule-based operation suggestions using only operations already in the transformation registry, no ML; **(2)** peak-memory tracking in the benchmark suite, with an 8 GB RAM laptop as the target; **(3)** an opt-in, off-by-default local model that explains profiles and maps plain-language questions onto validated operation payloads. No code until the maintainers confirm scope.
+- **Scaling, continued** — the remaining phases of [#537](https://github.com/c2siorg/dataloom/issues/537), and the rest of [#533](https://github.com/c2siorg/dataloom/issues/533): memory guardrails, then raising the default upload cap from 10 MB to 100 MB
+- **Proposed** — Parquet as the internal working copy, so dtypes are inferred once at upload instead of on every read ([#524](https://github.com/c2siorg/dataloom/issues/524))
 
 <br/>
 
@@ -86,6 +88,9 @@ LLM-shaped work where the interesting part is what happens *before* the model is
 
 | | |
 |:--|:--|
+| **[Veracity](https://github.com/YADUNANDAN-SINGH/Veracity)**<br/><sub>`python · fastapi` `react` `whisper` `paypal`</sub><br/><sub>🥈 2nd place, CT BuildFest 2.0</sub> | Hears scam calls while they're happening. Scores the caller's number, voice (an XLS-R anti-spoofing model, every second) and words (Whisper → scam rules that quote the caller's exact words, plus an optional local Llama 3.1 8B), and if the caller asks for money, PayPal *holds* the payment until the call checks out. 164 tests, two real phone-call tests, a one-command Docker judge build — and a README that says where it still fails. I was the team's only developer; extended afterwards for the PayPal AI Hackathon. |
+| **[Any Agent](https://github.com/YADUNANDAN-SINGH/Any-Agent)**<br/><sub>`typescript` `react` `chrome mv3` `ollama`</sub> | A Chrome side-panel agent that runs entirely on a local Ollama model — reads pages, searches and browses step by step (observe → think → act), fills forms, reads PDFs and Office files, and writes multi-page PDFs. Tuned for 8–12B models: pages are distilled into a compact labelled summary instead of raw HTML, and a wrong field pick or broken JSON gets corrected instead of failing the run. Stops and hands control back at CAPTCHAs. |
+| **[exam-paper-predictor](https://github.com/YADUNANDAN-SINGH/exam-paper-predictor)**<br/><sub>`claude skill`</sub> | Predicts an exam paper from 5–20 years of real past papers — but backtests itself first: predicts recent years blind, scores itself against the real paper, then improves. First real test, CBSE Class 12 Maths 2026: its top-priority question types carried **90.8%** of the real paper's marks; the exact section-by-section match was 32.5%, and the README reports both. |
 | **[Prism-RAG](https://github.com/YADUNANDAN-SINGH/Prism-RAG)**<br/><sub>`rust · axum` `python` `react` `ollama` `docker`</sub> | A RAG pipeline with the lid off. Hand-rolled in-memory vector store in Rust (cosine similarity over 384-d MiniLM embeddings), and a 3-panel UI that provides deterministic retrieval observability — showing every retrieved chunk, cosine score, and the exact assembled prompt *before* a local LLM streams a single token. Runs over a seeded corpus today; document ingestion and chunking are next. |
 | **[GlassBox](https://github.com/YADUNANDAN-SINGH/glassbox)**<br/><sub>`rust` `leptos` `surrealdb` `wasm`</sub> | The entire recommendation engine — SVD, database, UI — compiled to WebAssembly and running in *your* browser tab. Embedded SurrealDB over IndexedDB. Zero servers, zero telemetry, zero inference bill. |
 | **[Neuro-Symbolic Solver](https://github.com/YADUNANDAN-SINGH/Neuro-Symbolic-Solver)**<br/><sub>`tensorflow` `opencv` `fastapi` `react`</sub> | A CNN reads the handwritten expression; a deterministic evaluator computes the answer. The neural net does perception, the math does math — nothing gets to hallucinate arithmetic. |
