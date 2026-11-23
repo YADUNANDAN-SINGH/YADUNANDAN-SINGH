@@ -1,7 +1,7 @@
 <!-- banner.svg lives in this same repo (YADUNANDAN-SINGH/YADUNANDAN-SINGH), next to this README -->
 <div align="center">
 
-<img src="banner.svg" width="100%" alt="Yadunandan Singh — no black boxes. rebuild first, import later."/>
+<img src="banner.svg?v=2" width="100%" alt="Yadunandan Singh — no black boxes. rebuild first, import later."/>
 
 <br/><br/>
 
